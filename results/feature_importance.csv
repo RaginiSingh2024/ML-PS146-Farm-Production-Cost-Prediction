@@ -1,0 +1,10 @@
+Feature,Importance
+Labor_Requirements,0.856
+Seed_Cost,0.0444
+Fertilizer_Usage,0.0405
+Farm_Area,0.0362
+Pesticide_Usage,0.0086
+Irrigation_Cost,0.007
+Machinery_Cost,0.005
+Transportation_Cost,0.0023
+Crop_Type,0.0

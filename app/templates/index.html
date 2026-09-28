@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Production Cost Prediction | ML Case Study 146</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- University Academic Header -->
+        <header class="app-header">
+            <div class="header-container">
+                <div class="academic-badge">
+                    <span class="badge-dot"></span> ITM SKILLS UNIVERSITY &bull; B.TECH CSE SEMESTER V &bull; CASE STUDY 146
+                </div>
+                <h1 class="main-title">🌾 Farm Production Cost Prediction</h1>
+                <p class="tagline">
+                    Farm Production Cost Prediction uses machine learning regression models to estimate expected agricultural production costs based on farm characteristics and expenditure inputs.
+                </p>
+                
+                <div class="meta-strip">
+                    <div class="meta-item"><span class="meta-label">Course:</span> Machine Learning</div>
+                    <div class="meta-item"><span class="meta-label">Domain:</span> Precision Agriculture &amp; Farm Budgeting</div>
+                    <div class="meta-item"><span class="meta-label">Best Model:</span> <span class="highlight-pill">Linear Regression (R² = 0.9952)</span></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="main-container">
+            <div class="content-grid">
+                
+                <!-- Left Column: Prediction Form -->
+                <section class="card form-card">
+                    <div class="card-header">
+                        <div class="header-icon">🚜</div>
+                        <div>
+                            <h2>Farm Input Parameters</h2>
+                            <p class="card-subtitle">Enter farm parameters or select a realistic quick preset</p>
+                        </div>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="presets-section">
+                        <label class="presets-label">⚡ Quick Presets (Click to autofill sample farm):</label>
+                        <div class="preset-buttons">
+                            <button type="button" class="preset-btn" data-crop="wheat">🌾 Wheat (5 Ac)</button>
+                            <button type="button" class="preset-btn" data-crop="rice">🍚 Rice (6 Ac)</button>
+                            <button type="button" class="preset-btn" data-crop="cotton">☁️ Cotton (7.5 Ac)</button>
+                            <button type="button" class="preset-btn" data-crop="sugarcane">🎋 Sugarcane (10 Ac)</button>
+                            <button type="button" class="preset-btn" data-crop="maize">🌽 Maize (4 Ac)</button>
+                        </div>
+                    </div>
+
+                    <!-- Alert message container -->
+                    <div id="alertBox" class="alert-box" style="display: none;"></div>
+
+                    <form id="predictionForm" method="POST" action="/predict">
+                        
+                        <div class="form-grid">
+                            
+                            <!-- 1. Crop Type -->
+                            <div class="form-group full-width">
+                                <label for="crop_type">1. Crop Type <span class="req">*</span></label>
+                                <select id="crop_type" name="crop_type" required>
+                                    <option value="" disabled selected>-- Select Cultivated Crop --</option>
+                                    {% for crop in crops %}
+                                    <option value="{{ crop }}">{{ crop }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="field-hint">Select the agricultural crop being cultivated</small>
+                            </div>
+
+                            <!-- 2. Farm Area -->
+                            <div class="form-group">
+                                <label for="farm_area">2. Farm Area (Acres) <span class="req">*</span></label>
+                                <input type="number" id="farm_area" name="farm_area" step="0.01" min="0.1" max="200" placeholder="e.g. 5.0" required>
+                                <small class="field-hint">Total cultivated farm area in acres</small>
+                            </div>
+
+                            <!-- 3. Seed Cost -->
+                            <div class="form-group">
+                                <label for="seed_cost">3. Seed Cost (₹) <span class="req">*</span></label>
+                                <input type="number" id="seed_cost" name="seed_cost" step="0.01" min="0" placeholder="e.g. 9000" required>
+                                <small class="field-hint">Total expenditure on certified seeds</small>
+                            </div>
+
+                            <!-- 4. Fertilizer Usage -->
+                            <div class="form-group">
+                                <label for="fertilizer_usage">4. Fertilizer Usage (kg) <span class="req">*</span></label>
+                                <input type="number" id="fertilizer_usage" name="fertilizer_usage" step="0.01" min="0" placeholder="e.g. 600" required>
+                                <small class="field-hint">Total NPK/organic fertilizer applied in kg</small>
+                            </div>
+
+                            <!-- 5. Labor Requirements -->
+                            <div class="form-group">
+                                <label for="labor_requirements">5. Labor (Person-Days) <span class="req">*</span></label>
+                                <input type="number" id="labor_requirements" name="labor_requirements" step="0.1" min="0" placeholder="e.g. 60" required>
+                                <small class="field-hint">Total agricultural labor person-days</small>
+                            </div>
+
+                            <!-- 6. Irrigation Cost -->
+                            <div class="form-group">
+                                <label for="irrigation_cost">6. Irrigation Cost (₹) <span class="req">*</span></label>
+                                <input type="number" id="irrigation_cost" name="irrigation_cost" step="0.01" min="0" placeholder="e.g. 12500" required>
+                                <small class="field-hint">Pumping, canal, electricity and fuel expenses</small>
+                            </div>
+
+                            <!-- 7. Pesticide Usage -->
+                            <div class="form-group">
+                                <label for="pesticide_usage">7. Pesticide Usage (Liters/kg) <span class="req">*</span></label>
+                                <input type="number" id="pesticide_usage" name="pesticide_usage" step="0.01" min="0" placeholder="e.g. 12.5" required>
+                                <small class="field-hint">Chemical and biological crop protection</small>
+                            </div>
+
+                            <!-- 8. Machinery Cost -->
+                            <div class="form-group">
+                                <label for="machinery_cost">8. Machinery Cost (₹) <span class="req">*</span></label>
+                                <input type="number" id="machinery_cost" name="machinery_cost" step="0.01" min="0" placeholder="e.g. 18500" required>
+                                <small class="field-hint">Tractor, tilling, spraying and harvester rental</small>
+                            </div>
+
+                            <!-- 9. Transportation Cost -->
+                            <div class="form-group">
+                                <label for="transportation_cost">9. Transportation Cost (₹) <span class="req">*</span></label>
+                                <input type="number" id="transportation_cost" name="transportation_cost" step="0.01" min="0" placeholder="e.g. 2800" required>
+                                <small class="field-hint">Logistics from farm to local mandi/market</small>
+                            </div>
+
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="predictBtn" class="btn-primary">
+                                <span class="btn-text">Predict Production Cost</span>
+                                <span class="btn-spinner" style="display: none;"></span>
+                            </button>
+                            <button type="button" id="resetBtn" class="btn-secondary">Clear Inputs</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Right Column: Prediction Output & Model Insights -->
+                <div class="right-column">
+                    
+                    <!-- Result Card -->
+                    <section class="card result-card" id="resultCard">
+                        <div class="card-header">
+                            <div class="header-icon">📊</div>
+                            <div>
+                                <h2>Prediction Results</h2>
+                                <p class="card-subtitle">Estimates generated dynamically using the trained model</p>
+                            </div>
+                        </div>
+
+                        <div id="resultPlaceholder" class="result-placeholder">
+                            <div class="placeholder-icon">🌱</div>
+                            <h3>Awaiting Farm Parameters</h3>
+                            <p>Select a quick preset above or fill in the farm cost parameters to estimate total production budget.</p>
+                        </div>
+
+                        <div id="resultContent" class="result-content" style="display: none;">
+                            <div class="cost-badge-container">
+                                <span class="cost-label">Estimated Total Production Cost</span>
+                                <div class="predicted-value" id="resTotalCost">₹ 0.00</div>
+                                <div class="crop-meta" id="resCropMeta">Wheat &bull; 5.0 Acres</div>
+                            </div>
+
+                            <div class="cost-metrics-row">
+                                <div class="metric-card">
+                                    <span class="m-label">Cost per Acre</span>
+                                    <span class="m-val" id="resCostPerAcre">₹ 0.00</span>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="m-label">Active Model</span>
+                                    <span class="m-val highlight">Linear Regression</span>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="m-label">Model $R^2$ Score</span>
+                                    <span class="m-val highlight">0.9952 (99.5%)</span>
+                                </div>
+                            </div>
+
+                            <div class="budget-advice-box">
+                                <strong>💡 Agricultural Budgeting Recommendation:</strong>
+                                <p id="budgetAdvice">Labor requirements and seed expenditures constitute the primary cost drivers. Plan working capital with an additional 5-7% contingency margin for weather or fuel price fluctuations.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Model Comparison Card -->
+                    <section class="card comparison-card">
+                        <div class="card-header">
+                            <div class="header-icon">🏆</div>
+                            <div>
+                                <h2>Model Performance Comparison</h2>
+                                <p class="card-subtitle">Actual evaluation metrics generated on 200 hold-out test farms</p>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Model</th>
+                                        <th>MAE (₹)</th>
+                                        <th>RMSE (₹)</th>
+                                        <th>R² Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in model_comparison %}
+                                    <tr class="{% if loop.first %}best-row{% endif %}">
+                                        <td>
+                                            {% if loop.first %}⭐ {% endif %}<strong>{{ row['Model'] }}</strong>
+                                            {% if loop.first %}<span class="badge-best">BEST</span>{% endif %}
+                                        </td>
+                                        <td>₹{{ "{:,.2f}".format(row['MAE']) }}</td>
+                                        <td>₹{{ "{:,.2f}".format(row['RMSE']) }}</td>
+                                        <td><strong>{{ "{:.4f}".format(row['R²']) }}</strong></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span><strong>Evaluation Metric Rule:</strong> Lower MAE &amp; RMSE indicate superior accuracy; Higher R² indicates stronger explanatory variance.</span>
+                        </div>
+                    </section>
+
+                    <!-- Feature Importance Card -->
+                    <section class="card importance-card">
+                        <div class="card-header">
+                            <div class="header-icon">🔍</div>
+                            <div>
+                                <h2>Cost Component Influence</h2>
+                                <p class="card-subtitle">Ranked relative importance of expenditure drivers</p>
+                            </div>
+                        </div>
+
+                        <div class="importance-list">
+                            {% for item in feature_importance %}
+                            <div class="importance-row">
+                                <div class="imp-labels">
+                                    <span class="imp-name">{{ item['Feature'] }}</span>
+                                    <span class="imp-pct">{{ "{:.1f}%".format(item['Importance'] * 100) }}</span>
+                                </div>
+                                <div class="imp-bar-bg">
+                                    <div class="imp-bar-fill" style="width: {{ item['Importance'] * 100 }}%;"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-container">
+                <p><strong>ITM Skills University</strong> &bull; B.Tech CSE Semester V &bull; Machine Learning University Assessment</p>
+                <p class="sub">Problem Statement 146: Farm Production Cost Prediction Using Machine Learning</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

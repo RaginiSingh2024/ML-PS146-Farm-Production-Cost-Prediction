@@ -1,0 +1,6 @@
+Model,MAE,MSE,RMSE,R²
+Linear Regression,5981.27,84258630.48,9179.25,0.9952
+Polynomial Regression,6284.07,89528310.49,9461.94,0.9949
+Gradient Boosting Regression,8724.88,223733408.03,14957.72,0.9872
+Random Forest Regression,8752.42,338179348.72,18389.65,0.9807
+Decision Tree Regression,14936.46,684898125.06,26170.56,0.9608
