@@ -6,6 +6,21 @@
 **Academic Year:** 2026–2027  
 
 ---
+<p align="center">
+
+<a href="https://ml-ps146-farm-appuction-cost-prediction-nwquxvdesgufqsuj4uqgsm.streamlit.app/" target="_blank">
+  <img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-OPEN%20APP-FF4B4B?style=for-the-badge" />
+</a>
+
+<a href="https://docs.google.com/document/d/1sspKmD8gsUXgpfJLhsvW_O8eP4nP9bPfaslzNVvwIVc/edit?usp=sharing" target="_blank">
+  <img src="https://img.shields.io/badge/📄%20GOOGLE%20DOC-VIEW%20DOCUMENT-4285F4?style=for-the-badge" />
+</a>
+
+<a href="https://github.com/RaginiSingh2024/ML-PS146-Farm-Production-Cost-Prediction" target="_blank">
+  <img src="https://img.shields.io/badge/💻%20GITHUB%20REPO-VIEW%20CODE-181717?style=for-the-badge" />
+</a>
+
+</p>
 
 ## 📌 Problem Statement Overview
 Agricultural profitability depends heavily on production costs such as seeds, fertilizer, labor, irrigation, machinery, pesticides, and transportation. Predicting production costs can help farmers estimate budgets and profitability.
